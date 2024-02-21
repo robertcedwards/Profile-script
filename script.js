@@ -8,26 +8,46 @@ async function fetchProfileData() {
         console.error('Error fetching profile data:', error);
     }
 }
-
 function displayProfiles(profiles) {
     const profileContainer = document.getElementById('profileContent');
-    profileContainer.innerHTML = ''; // Clear existing content
+    // Initialize containers to hold unique values
+    const uniqueAvatars = new Set();
+    const uniqueNames = new Set();
+    const uniqueDescriptions = new Set();
+    const uniqueLocations = new Set();
+    const uniqueLinks = new Map();
+
     profiles.forEach(profile => {
-        const profileHtml = `
-            <div class="mb-5 p-4 bg-white rounded-lg shadow">
-                <img class="w-20 h-20 rounded-full mx-auto" src="${profile.avatar || ''}" alt="${profile.displayName || 'Profile Avatar'}">
-                <h2 class="text-xl font-semibold mt-2 text-center">${profile.displayName || 'N/A'}</h2>
-                <p class="text-gray-600 text-center">${profile.description || 'No description provided.'}</p>
-                <p class="text-gray-600 text-center">Location: ${profile.location || 'N/A'}</p>
-                <div class="mt-3 text-center">
-                    ${Object.entries(profile.links || {}).map(([key, value]) => `
-                        <a href="${value.link}" class="inline-block bg-blue-500 text-white rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">${key}</a>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-        profileContainer.innerHTML += profileHtml;
+        uniqueAvatars.add(profile.avatar);
+        uniqueNames.add(profile.displayName);
+        if (profile.description) uniqueDescriptions.add(profile.description);
+        if (profile.location) uniqueLocations.add(profile.location);
+
+        // Iterate through links and add them if not already present
+        Object.entries(profile.links || {}).forEach(([key, value]) => {
+            if (!uniqueLinks.has(key)) {
+                uniqueLinks.set(key, value.link);
+            }
+        });
     });
+
+    // Now create the HTML for the single card
+    const profileHtml = `
+        <div class="mb-5 p-4 bg-white rounded-lg shadow">
+            ${Array.from(uniqueAvatars).map(avatar => avatar ? `<img class="w-20 h-20 rounded-full mx-auto" src="${avatar}" alt="Profile Avatar">` : '').join('')}
+            <h2 class="text-xl font-semibold mt-2 text-center">${Array.from(uniqueNames).join(', ') || 'N/A'}</h2>
+            <p class="text-gray-600 text-center">${Array.from(uniqueDescriptions).join(', ') || 'No description provided.'}</p>
+            <p class="text-gray-600 text-center">Location: ${Array.from(uniqueLocations).join(', ') || 'N/A'}</p>
+            <div class="mt-3 text-center">
+                ${Array.from(uniqueLinks).map(([key, link]) => `
+                    <a href="${link}" class="inline-block bg-blue-500 text-white rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">${key}</a>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    // Set the innerHTML to the newly created profileHtml
+    profileContainer.innerHTML = profileHtml;
 }
 
 // Call the function when the window loads

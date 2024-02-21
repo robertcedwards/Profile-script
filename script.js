@@ -31,10 +31,13 @@ function displayProfiles(profiles) {
         });
     });
 
+    // Only display the first avatar
+    const firstAvatar = uniqueAvatars.values().next().value;
+
     // Now create the HTML for the single card
     const profileHtml = `
         <div class="mb-5 p-4 bg-white rounded-lg shadow">
-            ${Array.from(uniqueAvatars).map(avatar => avatar ? `<img class="w-20 h-20 rounded-full mx-auto" src="${avatar}" alt="Profile Avatar">` : '').join('')}
+            ${firstAvatar ? `<img class="w-20 h-20 rounded-full mx-auto" src="${firstAvatar}" alt="Profile Avatar">` : ''}
             <h2 class="text-xl font-semibold mt-2 text-center">${Array.from(uniqueNames).join(', ') || 'N/A'}</h2>
             <p class="text-gray-600 text-center">${Array.from(uniqueDescriptions).join(', ') || 'No description provided.'}</p>
             <p class="text-gray-600 text-center">Location: ${Array.from(uniqueLocations).join(', ') || 'N/A'}</p>

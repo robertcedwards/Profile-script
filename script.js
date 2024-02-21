@@ -22,7 +22,7 @@ function displayProfiles(profiles) {
                 <p class=\"text-gray-600 text-center\">Location: \" + (profile.location || 'N/A') + \"</p>
                 <div class=\"mt-3 text-center\">
                     \" + Object.entries(profile.links || {}).map(([key, link]) => \`
-                        <a href=\"${link.link}\" class=\"inline-block bg-blue-500 text-white rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2\">${key}</a>
+                    <a href="${link && link.link}" class="inline-block bg-blue-500 text-white rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">${key}</a>
                     \`).join('') + "
                 </div>
             </div>

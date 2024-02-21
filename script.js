@@ -54,7 +54,3 @@ function displayProfiles(profiles) {
         profileContainer.innerHTML += profileHtml;
     });
 }
-
-
-// Call the function when the window loads
-window.addEventListener('load', fetchProfileData);

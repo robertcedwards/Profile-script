@@ -14,7 +14,7 @@ function displayProfiles(profiles) {
     const profileContainer = document.getElementById('profileContent');
     profileContainer.innerHTML = ''; // Clear existing content
     profiles.forEach(profile => {
-        const profileHtml = """
+        const profileHtml = `
             <div class=\"mb-5 p-4 bg-white rounded-lg shadow\">
                 <img class=\"w-20 h-20 rounded-full mx-auto\" src=\"\" + (profile.avatar || '') + \"\" alt=\"\" + (profile.displayName || 'Profile Avatar') + \"\">
                 <h2 class=\"text-xl font-semibold mt-2 text-center\">\" + (profile.displayName || 'N/A') + \"</h2>
@@ -26,7 +26,7 @@ function displayProfiles(profiles) {
                     \`).join('') + "
                 </div>
             </div>
-        """;
+            `;
         profileContainer.innerHTML += profileHtml;
     });
 }

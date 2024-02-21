@@ -1,14 +1,38 @@
-
-async function fetchProfileData() {
+document.addEventListener('DOMContentLoaded', () => {
     const apiUrl = 'https://api.web3.bio/profile/0xhashbrown.eth';
+    checkForUpdates(apiUrl);
+});
+
+async function checkForUpdates(apiUrl) {
+    const localEtag = localStorage.getItem('etag');
+    const headers = localEtag ? { 'If-None-Match': localEtag } : {};
+
     try {
-        const response = await fetch(apiUrl);
-        const profiles = await response.json();
-        displayProfiles(profiles);
+        const response = await fetch(apiUrl, { headers: headers });
+
+        if (response.status === 304) {
+            console.log('JSON data is up to date.');
+            const localData = localStorage.getItem('jsonData');
+            if (localData) {
+                displayProfiles(JSON.parse(localData));
+            }
+        } else if (response.status === 200) {
+            console.log('New JSON data available.');
+            const data = await response.json();
+            const newEtag = response.headers.get('ETag');
+
+            // Update localStorage with new data and ETag
+            localStorage.setItem('jsonData', JSON.stringify(data));
+            localStorage.setItem('etag', newEtag);
+
+            displayProfiles(data);
+        }
     } catch (error) {
         console.error('Error fetching profile data:', error);
     }
 }
+
+
 
 function displayProfiles(profiles) {
     const profileContainer = document.getElementById('profileContent');

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combined Profile Display</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-4">
+    <div id="combinedProfileContent" class="max-w-md mx-auto"></div>
+    <script>
+        async function fetchAndDisplayProfile() {
+            const address = '0xFE3A509F8E8eb59209CC8c9b90f7b352781E96f4';
+            const pointsUrl = `https://www.degen.tips/api/airdrop2/season1/points?address=${address}`;
+            const allowanceUrl = `https://www.degen.tips/api/airdrop2/tip-allowance?address=${address}`;
+
+            try {
+                const [pointsResponse, allowanceResponse] = await Promise.all([
+                    fetch(pointsUrl).then(res => res.json()),
+                    fetch(allowanceUrl).then(res => res.json())
+                ]);
+
+                const profile = {
+                    ...allowanceResponse[0], // Assuming only one item in the array
+                    points: pointsResponse[0].points
+                };
+
+                displayCombinedProfile(profile);
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            }
+        }
+
+        function displayCombinedProfile(profile) {
+            const profileContainer = document.getElementById('combinedProfileContent');
+            const profileHtml = `
+                <div class="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <img src="${profile.avatar_url}" alt="${profile.display_name}" class="mx-auto h-24 w-24 rounded-full">
+                    </div>
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 text-center">${profile.display_name}</h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500 text-center">Points: ${profile.points}</p>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500 text-center">Tip Allowance: ${profile.tip_allowance}</p>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500 text-center">Remaining Allowance: ${profile.remaining_allowance}</p>
+                    </div>
+                </div>
+            `;
+
+            profileContainer.innerHTML = profileHtml;
+        }
+
+        fetchAndDisplayProfile();
+    </script>
+</body>
+</html>
